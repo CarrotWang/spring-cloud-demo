@@ -40,3 +40,5 @@ Loosely coupled service oriented architecture with bounded contexts.
           分布式服务跟踪；
           
 ![微服务组件](http://www.uml.org.cn/wfw/images/2018050842.png "微服务组件") 
+
+最后对于每个组件，我们要清楚它的实现原理。
