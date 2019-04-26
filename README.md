@@ -23,4 +23,20 @@ Loosely coupled service oriented architecture with bounded contexts.
 ## 组成
 组件包括：Eureka、Zuul、Hystrix、Ribbon、Feign、Spring Cloud Config、Sleuth。
 首先明确每种组件的作用，再来学习如何使用它们。
-
+     
+     Eureka：
+          负责服务的注册与发现；
+     Zuul：
+          微服务网关；
+     Hystrix：
+          用于服务调用的隔离、熔断、降级；
+     Ribbon：
+          负载均衡；
+     Feign：
+          负责Rest接口的调用；
+     Spring Cloud Config：
+          统一的配置；
+     Sleuth：
+          分布式服务跟踪；
+          
+![微服务组件](http://www.uml.org.cn/wfw/images/2018050842.png "微服务组件") 
