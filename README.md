@@ -95,21 +95,82 @@ Hystrix的作用有“依赖隔离”、“熔断”、“降级”，目的在�
    
    具体实现在 com.netflix.hystrix.AbstractCommand.TryableSemaphoreActual#tryAcquire ，原理就是通过一个AtomicInteger计数，当小于等于该计数时，继续使用原线程访问依赖，否则执行降级操作。
      
-![Hystrix调用流程图](https://raw.githubusercontent.com/CarrotWang/spring-cloud-demo/master/imgs/Hystrix.png "Hystrix调用流程图") 
+![Hystrix调用流程图](https://raw.githubusercontent.com/CarrotWang/spring-cloud-demo/master/imgs/Hystrix.png "Hystrix调用流程图")
+
+##### “信号量隔离”和“线程池隔离”的比较：
+
+###### 信号量隔离
+信号量隔离的优点：
      
+请求线程和服务调用线程使用同一线程，避免了线程切换带来的性能损耗。
+
+信号量隔离的缺点：
+
+不可以控制服务调用的等待时间，
+
+如果客户端是可信的且可以快速返回，可以使用信号隔离替换线程隔离,降低开销（一般是系统内部访问，比如访问本地缓存）.
+
+###### 线程池隔离
+线程隔离的优点:
+
+（1）将请求处理和服务调用做到线程隔离，请求线程可以控制请求时间，不受服务调用影响；
+
+（2）可以完全模拟异步调用，方便异步编程；
+
+（3）当一个失败的依赖再次变成可用时，线程池将清理，并立即恢复可用，而不是一个长时间的恢复。
+
+线程隔离的缺点:
+
+（1）线程池的主要缺点是它增加了cpu，因为每个命令的执行涉及到排队(默认使用SynchronousQueue避免排队)，调度和上下文切换。
+
+（2）对使用ThreadLocal等依赖线程状态的代码增加复杂性，需要手动传递和清理线程状态。
+
 2. 熔断：
+
+熔断器有三个状态：closed、open、half-open。与家用电路熔断器类似，closed表示关闭熔断，可以发起远程服务调用，open表示打开熔断，执行降级方法。
+
+当熔断器进入open状态时，会开始计时，当时间超过时间窗口，就会变为half-open状态，再调用该服务时，会调用远程接口，若成功则变为closed状态，否则变为open状态重新计时。
+
+每个熔断器默认维护10个bucket,每秒一个bucket,每个blucket记录成功,失败,超时,拒绝的状态，默认错误超过50%且10秒内超过20个请求进行中断拦截。
+
+![Hystrix断路器](https://github.com/CarrotWang/spring-cloud-demo/blob/master/imgs/hystrix-circuit-breaker.png?raw=true  "Hystrix断路器")
+
 
 3. 降级：
 
+整体资源快不够用了，忍痛将某些服务先关掉，待度过难关，在开启回来。
+
+所谓降级，就是一般是从整体符合考虑，就是当某个服务熔断之后，服务器将不再被调用，此刻客户端可以自己准备一个本地的fallback回调，返回一个缺省值，这样做，虽然服务水平下降，但好歹可用，比直接挂掉要强。
+
 Hystrix实现原理：
-命令模式
+
+https://www.jianshu.com/p/c8a998c9a571 “命令模式”与Hystrix。
+
+命令模式：命令对象包含执行动作的所有信息。
+
+四个实体：调用者、命令对象、接收者、客户端。
+
+（1）调用者调用命令的指定方法；
+（2）命令的执行方法被调用后，会真正执行接受者上的逻辑；
+（3）客户端决定什么时候执行命令，传递命令给调用者。
+
+命令模式解耦了请求者和实现者，请求者不需要关心实现者如何实现（面向扩展开发，面向修改封闭）。
+命令模式的缺点是，每多一个命令，都要新建一个类。
+
+对于Hystrix具体而言，调用某一服务时，我们实现HystrixCommand这一接口，即命令对象，将服务调用逻辑封装在其中，我们只需要关心调用命令即可，不需要关心Hystrix内部实现。
+
+更多Hystrix原理：
+
+https://blog.csdn.net/zl1zl2zl3/article/details/78840364 （Command 四种调用方式）
+
+http://www.iocoder.cn/categories/Hystrix/ （全面）
+
+http://www.imooc.com/article/76515 （讲了配置）
 
 ### Zuul
 
 ### Feign
 
 ### Sleuth
-
-### Spring Cloud Config
 
 
