@@ -81,13 +81,15 @@ Hystrix的作用有“依赖隔离”、“熔断”、“降级”，目的在�
 
 1. 依赖隔离：
 
-   Hystrix隔离方式采用线程/信号的方式,通过隔离限制依赖的并发量和阻塞扩散（某一请求因为依赖阻塞大量占用容器线程，导致其他请求得不到响应）。
-     
-![Hystrix执行逻辑图](https://raw.githubusercontent.com/CarrotWang/spring-cloud-demo/master/imgs/Hystrix_Process.png "Hystrix执行逻辑图")     
-     
+   Hystrix隔离方式采用线程/信号的方式,通过隔离限制依赖的并发量和阻塞扩散（某一请求因为依赖阻塞大量占用容器线程，导致其他请求得不到响应）。 
+   
+![Hystrix执行逻辑图](https://github.com/CarrotWang/spring-cloud-demo/blob/master/imgs/Hystrix_Process.png?raw=true "Hystrix执行逻辑图") 
+
 （1）线程池隔离：
    
    调用依赖服务接口的时候，不使用容器的线程，而是使用Hystrix配置的线程池，当某依赖对应的线程池中线程全被占用，且线程池中队列满的时候，再请求该依赖就会执行降级逻辑。
+   
+   请求线程和执行服务调用的线程分别是Tomcat容器线程和Hystrix设置的线程，这样请求线程能够自动设置超时或者直接异步调用，控制服务线程的占用时间。防止因某个服务调用阻塞，导致大量请求因为容器线程池被占满而得不到响应。
      
 （2）信号量隔离：
    
