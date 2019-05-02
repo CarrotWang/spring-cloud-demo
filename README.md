@@ -70,10 +70,37 @@ Eureka Server间的信息同步：每个Eureka Server同时也是Eureka Client�
 与Zookeeper实现的注册发现中心不同，Eureka保证的是AP，而不是CP，更适合服务注册发现的场景。（Zookeeper有节点宕机时，整个集群需要重新进行领导选举，从而达到一致状态，而Eureka允许不一致状态的存在，对于注册发现服务是可以接受的）。
 
 https://www.cnblogs.com/snowjeblog/p/8821325.html
+https://www.jianshu.com/p/2fa691d4a00a
 
 ### Ribbon
+实现客户端软负载均衡，具体的负载均衡算法：随机负载均衡、轮询、加权轮询、加权响应时间负载均衡、区域感知负载均衡。
+（负载均衡方式：DNS、硬件负载均衡、软件负载均衡）
 
 ### Hystrix
+Hystrix的作用有“依赖隔离”、“熔断”、“降级”，目的在于提高服务的鲁棒性和可用性。
+
+1. 依赖隔离：
+
+   Hystrix隔离方式采用线程/信号的方式,通过隔离限制依赖的并发量和阻塞扩散（某一请求因为依赖阻塞大量占用容器线程，导致其他请求得不到响应）。
+     
+![Hystrix执行逻辑图](https://raw.githubusercontent.com/CarrotWang/spring-cloud-demo/master/imgs/Hystrix_Process.png "Hystrix执行逻辑图")     
+     
+（1）线程池隔离：
+   
+   调用依赖服务接口的时候，不使用容器的线程，而是使用Hystrix配置的线程池，当某依赖对应的线程池中线程全被占用，且线程池中队列满的时候，再请求该依赖就会执行降级逻辑。
+     
+（2）信号量隔离：
+   
+   具体实现在 com.netflix.hystrix.AbstractCommand.TryableSemaphoreActual#tryAcquire ，原理就是通过一个AtomicInteger计数，当小于等于该计数时，继续使用原线程访问依赖，否则执行降级操作。
+     
+![Hystrix调用流程图](https://raw.githubusercontent.com/CarrotWang/spring-cloud-demo/master/imgs/Hystrix.png "Hystrix调用流程图") 
+     
+2. 熔断：
+
+3. 降级：
+
+Hystrix实现原理：
+命令模式
 
 ### Zuul
 
