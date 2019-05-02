@@ -42,3 +42,32 @@ Loosely coupled service oriented architecture with bounded contexts.
 ![微服务组件](http://www.uml.org.cn/wfw/images/2018050842.png "微服务组件") 
 
 最后对于每个组件，我们要清楚它的实现原理。
+
+## Spring Cloud组件
+### Eureka
+![Eureka架构图](https://raw.githubusercontent.com/CarrotWang/spring-cloud-demo/master/imgs/Eureka.png "Eureka架构图") 
+
+Eureka的架构图如上，Eureka分为Eureka Server、Eureka Client。单独部署Eureka Server，各Java微服务集成Eureka Client，与Eureka Server通信。
+
+服务注册：
+     微服务启动时，Eureka Client向Eureka Server注册自己的信息（服务信息、网络信息）；
+     
+服务发现：
+     服务消费者调用服务时，Eureka Client会查看本地是否有服务缓存信息，没有的情况下会去Eureka Server拉取信息；
+     
+
+Eureka Server
+
+### Ribbon
+
+### Hystrix
+
+### Zuul
+
+### Feign
+
+### Sleuth
+
+### Spring Cloud Config
+
+
