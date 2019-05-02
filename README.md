@@ -54,9 +54,22 @@ Eureka的架构图如上，Eureka分为Eureka Server、Eureka Client。单独部
      
 服务发现：
      服务消费者调用服务时，Eureka Client会查看本地是否有服务缓存信息，没有的情况下会去Eureka Server拉取信息；
-     
 
-Eureka Server
+（1）信息同步     
+Eureka Server间的信息同步：每个Eureka Server同时也是Eureka Client，互相之间注册，Eureka Server之间点对点以复制的方式同步“服务注册表”（由其他Eureka Server同步的信息不会同步）。
+
+（2）客户端缓存
+服务消费者要调用服务时，会通过Eureka Client向Eureka Server获取服务提供者地址列表，并缓存在本地，下次调用，则直接从本地缓存获取。
+
+（3）服务列表维护
+服务提供者在启动后，周期性（默认30秒）向Eureka Server发送心跳，以证明当前服务是可用状态。Eureka Server在一定的时间（默认90秒）未收到客户端的心跳，则认为服务宕机，注销该实例，并把当前服务提供者状态向订阅者发布，订阅过的服务消费者更新本地缓存。
+
+（4）Eureka保护机制
+当Eureka Server集群和服务集群发生分区时，会导致大部分服务被错误的判断为不可用，为了防止此情况发生，Eureka提供了保护机制，当Eureka Server节点在短时间内丢失过多的客户端时（可能发送了网络故障），那么这个节点将进入自我保护模式，不再注销任何微服务，当网络故障回复后，该节点会自动退出自我保护模式。（为了提高可用性）
+
+与Zookeeper实现的注册发现中心不同，Eureka保证的是AP，而不是CP，更适合服务注册发现的场景。（Zookeeper有节点宕机时，整个集群需要重新进行领导选举，从而达到一致状态，而Eureka允许不一致状态的存在，对于注册发现服务是可以接受的）。
+
+https://www.cnblogs.com/snowjeblog/p/8821325.html
 
 ### Ribbon
 
