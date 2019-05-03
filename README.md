@@ -183,8 +183,13 @@ https://blog.csdn.net/u011820505/article/details/79373594 （Zuul默认实现的
 
 
 ### Feign
+Feign封装了Http调用流程，使服务调用开发成本降低。
 
+与Dubbo等RPC框架类似，Feign使用“动态代理”模式完成对服务接口的调用，并且封装了http报文到Request、Response对象的编解码逻辑。
+
+![Feign](https://github.com/CarrotWang/spring-cloud-demo/blob/master/imgs/feign.png?raw=true "Feign")
 
 ### Sleuth
+
 
 
