@@ -168,8 +168,22 @@ http://www.iocoder.cn/categories/Hystrix/ （全面）
 http://www.imooc.com/article/76515 （讲了配置）
 
 ### Zuul
+Zuul是Spring Cloud全家桶中的微服务API网关。网关负责对外聚合内部各微服务的API，屏蔽内部系统的变动，保持系统的稳定性。
+
+另外，网关还承担负载均衡、统一鉴权、协议转换、监控检测等功能。
+
+Zuul中有四类Filter，“pre”、“routing”、“post”、“error”，Zuul内部默认实现了一些filter，用户也可以自定义filter，比如鉴权。filter可以使用Groovy编写，达到动态加载的目的。（Zuul的1.0版本基于Servlet实现，2.0版本基于Netty实现）
+
+https://blog.csdn.net/u011820505/article/details/79373594 （Zuul默认实现的filter）
+
+![Zuul](https://github.com/CarrotWang/spring-cloud-demo/blob/master/imgs/zuul.png?raw=true "Zuul")
+
+##### Zuul的高可用：
+部署多台zuul服务，前端使用nginx等负载均衡组件。
+
 
 ### Feign
+
 
 ### Sleuth
 
